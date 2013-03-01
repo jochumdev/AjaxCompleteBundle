@@ -3,6 +3,8 @@ PcdummyAjaxCompleteBundle - adds some ajax to sonata-doctrine-orm-admin
 
 This bundle adds 2 new ajax enabled widgets for the sonata-admin.
 
+###pcdummy_ajaxcomplete_m2m
+[![pcdummy_ajaxcomplete_m2m](https://raw.github.com/pcdummy/AjaxCompleteBundle/master/Resources/doc/pcdummy_ajaxcomplete_m2m.png)]
 
 Requirements
 ----------
