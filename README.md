@@ -16,6 +16,32 @@ TODO
 
 Installation
 ----------
+* Add "pcdummy/ajaxcomplete-bundle" "dev-master" to your composer.json.
+* Add it to your AppKernel.php
+
+``` php
+new Pcdummy\AjaxCompleteBundle\PcdummyAjaxCompleteBundle(),
+```
+
+* Register the widgets with twig:
+
+``` php
+  twig:
+    form:
+      resources:
+        - PcdummyAjaxCompleteBundle::fields.html.twig
+```
+
+* Now you can use it in your admin like this:
+
+``` php
+  ->add('printer_manufacturer', 'pcdummy_ajaxcomplete', array('entity' => "PcdummyPrinterBundle:Manufacturer", 'property' => "name", 'maxRows' => 15))
+  ->add('catridges', 'pcdummy_ajaxcomplete_m2m', array(
+      'required' => false,
+      'expanded' => true,
+      'multiple' => true,
+  ))
+```
 
 LICENSE
 ----------
