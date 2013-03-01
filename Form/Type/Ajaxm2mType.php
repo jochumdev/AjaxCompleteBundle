@@ -63,8 +63,6 @@ class Ajaxm2mType extends AbstractType
             'template'          => 'choice',
             'multiple'          => false,
             'expanded'          => false,
-            'model_manager'     => null,
-            'class'             => null,
             'property'          => null,
             'query'             => null,
             'choices'           => null,
