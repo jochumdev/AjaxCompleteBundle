@@ -8,7 +8,6 @@ Requirements
 ----------
 * Symfony 2.1
 * Sonata/DoctrineORMAdminBundle dev-master
-* Patched DoctrineORMAdminBundle/Builder/FormContractor.php
 
 TODO
 ----------
