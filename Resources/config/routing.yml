@@ -1,0 +1,3 @@
+pcdummy_ajaxcomplete_ajax:
+    pattern: /ajaxcomplete/_ajax
+    defaults: { _controller: PcdummyAjaxCompleteBundle:Default:get_Ajax }

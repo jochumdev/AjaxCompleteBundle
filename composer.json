@@ -1,0 +1,25 @@
+{
+    "name": "pcdummy/ajaxcomplete-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony AjaxCompleteBundle",
+    "keywords": ["Ajax Autocomplete form type", "Ajax Many 2 Many form type"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "René Kistl",
+            "email": "rene@kistl.at"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+        "symfony/framework-bundle": ">=2.1.0,<2.1.x-dev"
+    },
+    "suggest": {
+        "sonata-project/admin-bundle": "master-dev",
+        "sonata-project/doctrine-orm-admin-bundle": "master-dev"
+    },
+    "autoload": {
+        "psr-0": { "Pcdummy\\AjaxCompleteBundle": "" }
+    },
+    "target-dir": "Pcdummy/AjaxCompleteBundle"
+}

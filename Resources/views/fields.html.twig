@@ -1,0 +1,219 @@
+{% block pcdummy_ajaxcomplete_widget %}
+    <script type="text/javascript">
+        if (typeof jQuery.ui == 'undefined'){
+            $.getScript('{{ asset('bundles/sonatajquery/themes/flick/jquery-ui-1.8.16.custom.css') }}');
+        }
+    </script>
+
+    {% if sonata_admin.field_description %}
+        <div id="field_container_{{ id }}" class="field-container">
+            <span id="field_widget_{{ id }}" >
+                <input id="{{ form.getVars().id }}_id" type="hidden" value="{{ form.getVars().data.getId() }}" />
+                {{ form_widget(form) }}
+            </span>
+
+            <span id="field_actions_{{ id }}" class="field-actions">
+                {% if sonata_admin.field_description.associationadmin.hasRoute('create') and sonata_admin.field_description.associationadmin.isGranted('CREATE') %}
+                    <a
+                        href="{{ sonata_admin.field_description.associationadmin.generateUrl('create') }}"
+                        onclick="return start_field_dialog_form_add_{{ id }}(this);"
+                        class="btn sonata-ba-action"
+                        title="{{ 'link_add'|trans({}, 'SonataAdminBundle') }}"
+                        >
+                        <i class="icon-plus"></i>
+                        {{ 'link_add'|trans({}, 'SonataAdminBundle') }}
+                    </a>
+                {% endif %}
+            </span>
+
+            <div style="display: none" id="field_dialog_{{ id }}"></div>
+        </div>
+
+        {% include 'SonataDoctrineORMAdminBundle:CRUD:edit_orm_many_association_script.html.twig' %}
+
+    {% else %}
+        {{ form_widget(form) }}
+    {% endif %}
+
+    <script>
+    jQuery(function() {
+            jQuery( "#{{ form.getVars().id }}" ).autocomplete({
+                source: function( request, response ) {
+                    jQuery.ajax({
+                        url: "{{ path('pcdummy_ajaxcomplete_ajax') }}",
+                        dataType: "json",
+                        data: {
+                            entity: "{{ entity }}",
+                            property: "{{ property }}",
+                            maxRows: {{ maxRows }},
+                            letters: request.term
+                        },
+                        success: function( data ) {
+                            response(jQuery.map( data, function(k, v) {
+                                return {
+                                    label: k,
+                                    value: k,
+                                    id: v
+                                }
+                            }));
+                        },
+                    });
+                },
+                {% if sonata_admin.field_description %}
+                change: function (event, ui) {
+                    jQuery("#{{ form.getVars().id }}_id").val(ui.item.id);
+                },
+                {% endif %}
+                minLength: 1,
+                open: function() {
+                    jQuery( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+                },
+                close: function() {
+                    jQuery( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+                }
+            });
+
+        });
+    </script>
+
+    <style>
+        .ui-autocomplete {
+            max-height: 100px;
+            overflow-y: auto;
+            /* prevent horizontal scrollbar */
+            overflow-x: hidden;
+            /* add padding to account for vertical scrollbar */
+            padding-right: 20px;
+        }
+            /* IE 6 doesn't support max-height
+           * we use height instead, but this forces the menu to always be this tall
+           */
+        * html .ui-autocomplete {
+            height: 100px;
+        }
+    </style>
+{% endblock %}
+
+{% block pcdummy_ajaxcomplete_m2m_widget %}
+    {% if sonata_admin.field_description %}
+        <div id="field_container_{{ id }}" class="field-container">
+            <input type="text" id="{{ form.getVars().id }}_m2m" style="display:none;" />
+            <span id="field_widget_{{ id }}" >
+                {{ form_widget(form) }}
+            </span>
+
+            <span id="field_actions_{{ id }}" class="field-actions">
+                {% if sonata_admin.field_description.associationadmin.hasRoute('create') and sonata_admin.field_description.associationadmin.isGranted('CREATE') %}
+                    <a
+                        href="{{ sonata_admin.field_description.associationadmin.generateUrl('create') }}"
+                        onclick="return start_field_dialog_form_add_{{ id }}(this);"
+                        class="btn sonata-ba-action"
+                        title="{{ 'link_add'|trans({}, 'SonataAdminBundle') }}"
+                        >
+                        <i class="icon-plus"></i>
+                        {{ 'link_add'|trans({}, 'SonataAdminBundle') }}
+                    </a>
+                {% endif %}
+            </span>
+
+            <div style="display: none" id="field_dialog_{{ id }}"></div>
+        </div>
+
+        {% include 'SonataDoctrineORMAdminBundle:CRUD:edit_orm_many_association_script.html.twig' %}
+
+    {% else %}
+        <input type="text" id="{{ form.getVars().id }}_m2m" style="display:none;" />
+        {{ form_widget(form) }}
+    {% endif %}
+
+    <script>
+        // Container for the autocomplete
+        var autoSource = [];
+
+        // Hide a <li> element
+        hideCheckBox = function(elem) {
+            jQuery(elem).css("display", "none");
+
+            addAutoSourceElem(elem);
+        };
+
+        // Show a <li> element
+        showCheckBox = function(elem) {
+            jQuery(elem).css("display", "inline");
+            jQuery(elem).find("input").attr("checked", true);
+
+            rmAutoSourceElem(elem);
+        };
+
+        rmAutoSourceElem = function(elem, sort = true) {
+            var autoElem = {elem: elem, value: jQuery.trim(jQuery(elem).find("span").html())};
+            autoSource.splice(jQuery.inArray(autoElem, autoSource), 1);
+
+            if (sort) {
+                autoSource.sort(function(a, b) {
+                    return a.value > b.value;
+                });
+            };
+
+            resetAutoComplete();
+        }
+
+        addAutoSourceElem = function(elem, sort = true) {
+            autoSource.push({elem: elem, value: jQuery.trim(jQuery(elem).find("span").html())});
+            if (sort) {
+                autoSource.sort(function(a, b) {
+                    return a.value > b.value;
+                });
+            };
+
+            resetAutoComplete();
+        };
+
+        resetAutoComplete = function() {
+            jQuery( "#{{ form.getVars().id }}_m2m" ).autocomplete({
+                source: autoSource,
+                minLength: 1,
+                select: function (event, ui) {
+                    showCheckBox(ui.item.elem);
+                },
+                open: function() {
+                    jQuery( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+                },
+                close: function() {
+                    jQuery( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+                }
+            });
+        };
+
+        jQuery(function() {
+            // Hide all inactive checkboxes (<li> elements),
+            // Build the autocomplete source.
+            jQuery.each(jQuery("#{{ form.getVars().id }} li"), function(v, elem) {
+                var ip = jQuery(elem).find("input");
+                if (!ip.attr("checked")) {
+                    //console.log("ELEM: " + jQuery.trim(jQuery(elem).find("span").html()));
+                    hideCheckBox(elem);
+                };
+            });
+
+            jQuery.each(jQuery("#{{ form.getVars().id }} li input"), function(v, elem) {
+                jQuery(elem).change(function(ev) {
+                    var me = jQuery(this);
+                    if (!me.attr(":checked")) {                        
+                        if (confirm('Do you realy want to remove this item from the list?') == true) {
+                            hideCheckBox(me.parent().parent());
+                        } else {
+                            me.attr("checked", true);
+                        }
+                    }
+                });
+            });
+
+            // Add Autocomplete
+            jQuery( "#{{ form.getVars().id }}_m2m" ).css("display", "block");
+
+            resetAutoComplete();
+        });
+    </script>
+
+{% endblock %}
